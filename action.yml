@@ -28,6 +28,7 @@ inputs:
   target:
     description: 'Product to be build e.g. buildmgr'
     required: true
+
 runs:
   using: "composite"
   steps:
@@ -78,6 +79,7 @@ runs:
 
     - uses: ammaraskar/gcc-problem-matcher@master
       if: ${{ startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux') }}
+
     - uses: ammaraskar/msvc-problem-matcher@master
       if: ${{ startsWith(runner.os, 'Windows') }}
 
@@ -86,7 +88,7 @@ runs:
       shell: bash
       run: |
         cmake -G ${{ inputs.generator }} \
-          -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} \
+          -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} -T v142 \
           ${{ inputs.add_cmake_variables }} \
           ..
       working-directory: ./${{ inputs.build_folder }}
@@ -100,6 +102,13 @@ runs:
           ${{ inputs.add_cmake_variables }} \
           ..
       working-directory: ./${{ inputs.build_folder }}
+
+    - name: Set up MSVC v142 environment
+      if: ${{ startsWith(runner.os, 'Windows') }}
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        toolset: 14.29  # corresponds to v142
+        arch: ${{ inputs.arch }}
 
     - name: Generate ${{ inputs.target }} ${{ inputs.arch }} for Windows
       if: ${{ startsWith(runner.os, 'Windows') }}
