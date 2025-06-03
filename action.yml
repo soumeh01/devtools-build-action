@@ -75,6 +75,7 @@ runs:
       if: ${{ startsWith(runner.os, 'Windows') }}
       uses: ilammy/msvc-dev-cmd@v1
       with:
+        toolset: 14.29  # corresponds to v142
         arch: amd64
 
     - uses: ammaraskar/gcc-problem-matcher@master
@@ -102,13 +103,6 @@ runs:
           ${{ inputs.add_cmake_variables }} \
           ..
       working-directory: ./${{ inputs.build_folder }}
-
-    - name: Set up MSVC v142 environment
-      if: ${{ startsWith(runner.os, 'Windows') }}
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        toolset: 14.29  # corresponds to v142
-        arch: ${{ inputs.arch }}
 
     - name: Generate ${{ inputs.target }} ${{ inputs.arch }} for Windows
       if: ${{ startsWith(runner.os, 'Windows') }}
