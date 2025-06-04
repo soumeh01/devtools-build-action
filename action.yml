@@ -60,11 +60,6 @@ runs:
           qemu-user \
           qemu-user-static
 
-    - name: Install Windows deps
-      if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: powershell
-      run: choco install -y ninja
-
     - name: Create build folder
       shell: bash
       run: |
@@ -115,14 +110,14 @@ runs:
 
     - name: Generate ${{ inputs.target }} for Windows-${{ inputs.arch }}
       if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: powershell
+      shell: cmd
       run: |
         cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.add_cmake_variables }} ..
       working-directory: ./${{ inputs.build_folder }}
 
     - name: Build ${{ inputs.target }} for Windows-${{ inputs.arch }}
       if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: powershell
+      shell: cmd
       run: |
         cmake --build . --target ${{ inputs.target }} ${{ inputs.add_cmake_build_args}}
       working-directory: ./${{ inputs.build_folder }}
