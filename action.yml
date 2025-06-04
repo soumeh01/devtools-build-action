@@ -67,6 +67,7 @@ runs:
 
     - name: List available MSVC toolsets
       if: ${{ startsWith(runner.os, 'Windows') }}
+      shell: cmd
       continue-on-error: true
       run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
@@ -79,6 +80,7 @@ runs:
 
     - name: List available MSVC toolsets
       if: ${{ startsWith(runner.os, 'Windows') }}
+      shell: cmd
       continue-on-error: true
       run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
