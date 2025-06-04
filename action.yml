@@ -138,7 +138,7 @@ runs:
       if: ${{ startsWith(runner.os, 'Windows') }}
       shell: cmd
       run: |
-        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} -DCMAKE_GENERATOR_TOOLSET=v142 ${{ inputs.add_cmake_variables }} ..
+        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.add_cmake_variables }} ..
       working-directory: ./${{ inputs.build_folder }}
 
     - name: Build ${{ inputs.target }} for Windows-${{ inputs.arch }}
