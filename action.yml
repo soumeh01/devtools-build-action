@@ -75,7 +75,7 @@ runs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: "${{ inputs.arch != 'amd64' && 'amd64_' || '' }}${{ inputs.arch }}"
-        toolset: 14.29  # corresponds to v142
+        vsversion: "2019"
 
     - uses: ammaraskar/gcc-problem-matcher@master
       if: ${{ startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux') }}
