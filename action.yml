@@ -60,6 +60,13 @@ runs:
           qemu-user \
           qemu-user-static
 
+    - name: Install Windows deps
+      if: ${{ startsWith(runner.os, 'Windows') }}
+      shell: powershell
+      run: |
+        choco install -y ninja
+        choco install windows-sdk-10-version-22621-all -y
+
     - name: Create build folder
       shell: bash
       run: |
@@ -155,7 +162,7 @@ runs:
       if: ${{ startsWith(runner.os, 'Windows') }}
       shell: cmd
       run: |
-        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.add_cmake_variables }} ..
+        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} -DCMAKE_SYSTEM_VERSION=10.0.22621.0 ${{ inputs.add_cmake_variables }} ..
       working-directory: ./${{ inputs.build_folder }}
 
     - name: Build ${{ inputs.target }} for Windows-${{ inputs.arch }}
