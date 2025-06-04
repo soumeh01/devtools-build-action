@@ -88,6 +88,7 @@ runs:
 
 
     - name: Configure and build with MSVC v142
+      if: ${{ startsWith(runner.os, 'Windows') }}
       shell: cmd
       run: |
         :: Set VC environment based on architecture
