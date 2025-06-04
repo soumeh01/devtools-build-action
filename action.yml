@@ -64,7 +64,7 @@ runs:
       if: ${{ startsWith(runner.os, 'Windows') }}
       shell: cmd
       run: |
-        vs_installer.exe modify --add Microsoft.VisualStudio.Component.Windows10SDK.22621 --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --add Microsoft.VisualStudio.Component.Windows10SDK.22621 --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
 
     - name: Create build folder
       shell: bash
