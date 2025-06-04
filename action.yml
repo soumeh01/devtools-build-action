@@ -87,7 +87,7 @@ runs:
         dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
 
-    - name: Configure and build with MSVC v142
+    - name: Configure and build with MSVC
       if: ${{ startsWith(runner.os, 'Windows') }}
       shell: cmd
       run: |
@@ -97,14 +97,21 @@ runs:
         :: Set toolset version
         set TOOLSET_VERSION=14.29
     
-        :: Locate vcvars script dynamically
-        for /f "usebackq tokens=*" %%i in (`"%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set VSPATH=%%i
+        :: Locate vswhere.exe and get VS path safely
+        "%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > vs_path.txt
+        set /p VSPATH=<vs_path.txt
+        del vs_path.txt
     
+        :: Echo for debug
+        echo Using Visual Studio at: %VSPATH%
+    
+        :: Call vcvars with correct architecture and toolset version
         if "%ARCH%"=="amd64" (
           call "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat" -vcvars_ver=%TOOLSET_VERSION%
         ) else if "%ARCH%"=="arm64" (
           call "%VSPATH%\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" -vcvars_ver=%TOOLSET_VERSION%
         )
+
 
 
     - uses: ammaraskar/gcc-problem-matcher@master
