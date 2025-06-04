@@ -65,12 +65,32 @@ runs:
       run: |
         mkdir -p ${{ inputs.build_folder }}
 
+    - name: List available MSVC toolsets
+      if: ${{ startsWith(runner.os, 'Windows') }}
+      continue-on-error: true
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+
     - name: Configure Windows build
       if: ${{ startsWith(runner.os, 'Windows') }}
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: "${{ inputs.arch != 'amd64' && 'amd64_' || '' }}${{ inputs.arch }}"
         toolset: 14.29  # corresponds to v142
+
+    - name: List available MSVC toolsets
+      if: ${{ startsWith(runner.os, 'Windows') }}
+      continue-on-error: true
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+
+    - name: Configure environment for ${{ matrix.arch }}
+      if: ${{ startsWith(runner.os, 'Windows') }}
+      shell: pwsh
+      run: |
+        if ('${{ matrix.arch }}' -eq 'x64') {
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        } elseif ('${{ matrix.arch }}' -eq 'arm64') {
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
+        }
 
     - uses: ammaraskar/gcc-problem-matcher@master
       if: ${{ startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux') }}
