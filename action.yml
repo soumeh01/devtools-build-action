@@ -87,14 +87,15 @@ runs:
         dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
 
-    - name: Configure environment for ${{ inputs.arch }}
-      if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: pwsh
+    - name: Configure and build with MSVC v142
+      shell: cmd
       run: |
-        switch ('${{ inputs.arch }}') {
-          'amd64'  { cmd /c '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"' }
-          'arm64'  { cmd /c '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"' }
-        }
+        :: Set VC environment based on architecture
+        if "%ARCH%"=="amd64" (
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" -vcvars_ver=14.29
+        ) else if "%ARCH%"=="arm64" (
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" -vcvars_ver=14.29
+        )
 
     - uses: ammaraskar/gcc-problem-matcher@master
       if: ${{ startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux') }}
@@ -136,7 +137,7 @@ runs:
       if: ${{ startsWith(runner.os, 'Windows') }}
       shell: cmd
       run: |
-        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.add_cmake_variables }} ..
+        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} -DCMAKE_GENERATOR_TOOLSET=v142 ${{ inputs.add_cmake_variables }} ..
       working-directory: ./${{ inputs.build_folder }}
 
     - name: Build ${{ inputs.target }} for Windows-${{ inputs.arch }}
