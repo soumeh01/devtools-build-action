@@ -70,7 +70,7 @@ runs:
       shell: cmd
       continue-on-error: true
       run: |
-        dir "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+        dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
 
     - name: Configure Windows build
@@ -85,14 +85,14 @@ runs:
       shell: cmd
       continue-on-error: true
       run: |
-        dir "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+        dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
 
-    - name: Configure environment for ${{ matrix.arch }}
+    - name: Configure environment for ${{ inputs.arch }}
       if: ${{ startsWith(runner.os, 'Windows') }}
       shell: pwsh
       run: |
-        switch ('${{ matrix.arch }}') {
+        switch ('${{ inputs.arch }}') {
           'x64'    { cmd /c '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"' }
           'arm64'  { cmd /c '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"' }
         }
