@@ -78,6 +78,7 @@ runs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: "${{ inputs.arch != 'amd64' && 'amd64_' || '' }}${{ inputs.arch }}"
+        toolset: 14.29
 
     - name: List available MSVC toolsets
       if: ${{ startsWith(runner.os, 'Windows') }}
