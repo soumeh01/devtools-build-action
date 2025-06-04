@@ -62,9 +62,8 @@ runs:
 
     - name: Install Windows deps
       if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: powershell
+      shell: cmd
       run: |
-        choco install -y ninja
         vs_installer.exe modify --add Microsoft.VisualStudio.Component.Windows10SDK.22621 --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
 
     - name: Create build folder
