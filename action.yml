@@ -65,7 +65,7 @@ runs:
       shell: powershell
       run: |
         choco install -y ninja
-        choco install windows-sdk-10-version-22621-all -y
+        vs_installer.exe modify --add Microsoft.VisualStudio.Component.Windows10SDK.22621 --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
 
     - name: Create build folder
       shell: bash
@@ -93,6 +93,7 @@ runs:
       continue-on-error: true
       run: |
         dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+        dir "C:\Program Files (x86)\Windows Kits\10\Include"
 
 
     - name: Configure and build with MSVC
