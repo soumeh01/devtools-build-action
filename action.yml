@@ -98,7 +98,7 @@ runs:
         set TOOLSET_VERSION=14.29
     
         :: Locate vswhere.exe and get VS path safely
-        "%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > vs_path.txt
+        vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > vs_path.txt
         set /p VSPATH=<vs_path.txt
         del vs_path.txt
     
