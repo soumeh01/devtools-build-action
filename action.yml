@@ -28,17 +28,18 @@ inputs:
   target:
     description: 'Product to be build e.g. buildmgr'
     required: true
+
 runs:
   using: "composite"
   steps:
-    - name: Install macOS deps
-      if: ${{ startsWith(runner.os, 'macOS') }}
-      shell: bash
-      run: |
-        brew install \
-          ninja \
-          doxygen \
-          swig
+    #- name: Install macOS deps
+    #  if: ${{ startsWith(runner.os, 'macOS') }}
+    #  shell: bash
+    #  run: |
+    #    brew install \
+    #      ninja \
+    #      doxygen \
+    #      swig
 
     - name: Install Linux deps
       if: ${{ startsWith(runner.os, 'Linux') }}
@@ -62,65 +63,19 @@ runs:
 
     - name: Install Windows deps
       if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: cmd
-      run: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --add Microsoft.VisualStudio.Component.Windows10SDK.22621 --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+      shell: powershell
+      run: choco install -y ninja
 
     - name: Create build folder
       shell: bash
       run: |
         mkdir -p ${{ inputs.build_folder }}
 
-    - name: List available MSVC toolsets
-      if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: cmd
-      continue-on-error: true
-      run: |
-        dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
-
-
     - name: Configure Windows build
       if: ${{ startsWith(runner.os, 'Windows') }}
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: "${{ inputs.arch != 'amd64' && 'amd64_' || '' }}${{ inputs.arch }}"
-        toolset: 14.29
-
-    - name: List available MSVC toolsets
-      if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: cmd
-      continue-on-error: true
-      run: |
-        dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
-        dir "C:\Program Files (x86)\Windows Kits\10\Include"
-
-
-    - name: Configure and build with MSVC
-      if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: cmd
-      run: |
-        :: Set default architecture if not set
-        if "%ARCH%"=="" set ARCH=amd64
-    
-        :: Set toolset version
-        set TOOLSET_VERSION=14.29
-    
-        :: Locate vswhere.exe and get VS path safely
-        vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > vs_path.txt
-        set /p VSPATH=<vs_path.txt
-        del vs_path.txt
-    
-        :: Echo for debug
-        echo Using Visual Studio at: %VSPATH%
-    
-        :: Call vcvars with correct architecture and toolset version
-        if "%ARCH%"=="amd64" (
-          call "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat" -vcvars_ver=%TOOLSET_VERSION%
-        ) else if "%ARCH%"=="arm64" (
-          call "%VSPATH%\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" -vcvars_ver=%TOOLSET_VERSION%
-        )
-
-
 
     - uses: ammaraskar/gcc-problem-matcher@master
       if: ${{ startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux') }}
@@ -160,14 +115,14 @@ runs:
 
     - name: Generate ${{ inputs.target }} for Windows-${{ inputs.arch }}
       if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: cmd
+      shell: powershell
       run: |
-        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} -DCMAKE_SYSTEM_VERSION=10.0.22621.0 ${{ inputs.add_cmake_variables }} ..
+        cmake -G ${{ inputs.generator }} -DCMAKE_BUILD_TYPE=${{ inputs.build_type }} ${{ inputs.add_cmake_variables }} ..
       working-directory: ./${{ inputs.build_folder }}
 
     - name: Build ${{ inputs.target }} for Windows-${{ inputs.arch }}
       if: ${{ startsWith(runner.os, 'Windows') }}
-      shell: cmd
+      shell: powershell
       run: |
         cmake --build . --target ${{ inputs.target }} ${{ inputs.add_cmake_build_args}}
       working-directory: ./${{ inputs.build_folder }}
